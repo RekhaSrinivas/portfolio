@@ -1,1 +1,1 @@
-https://github.com/RekhaSrinivas/portfolio
+https://rekhasrinivas.github.io/portfolio
