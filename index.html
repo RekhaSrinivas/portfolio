@@ -211,7 +211,7 @@
     </div>
 
     <div class="snapshot" aria-label="At a glance">
-      <div class="r"><span class="k">Focus</span><span class="v">Applied machine learning, generative AI, causal inference, forecasting</span></div>
+      <div class="r"><span class="k">Focus</span><span class="v">Applied machine learning, recommendation systems, generative AI, causal inference, forecasting</span></div>
       <div class="r"><span class="k">Core stack</span><span class="v mono">Python · SQL · PyTorch · scikit-learn · FastAPI · Docker</span></div>
     </div>
   </section>
@@ -275,6 +275,21 @@
         <span class="metric"><b>168-hour</b> horizon</span>
       </div>
       <p class="tech">Python · Amazon Chronos-T5 · LightGBM · statsforecast (MSTL) · pytorch-forecasting · FastAPI · DuckDB</p>
+    </article>
+
+    <article class="proj reveal">
+      <div class="proj-head">
+        <h3>Two-Stage Recommender with Graph Neural Network</h3>
+        <span class="proj-links"><span class="soft">Repo available on request</span></span>
+      </div>
+      <p class="desc">A recommender on MovieLens built the way large platforms do it: a cheap two-tower retriever narrows the catalogue to a shortlist, then a LambdaMART ranker reorders it with richer features, including embeddings from a LightGCN graph network I wrote from scratch. I held everything to a leakage-free temporal split and then checked whether the offline gains would actually survive a launch with a simulated A/B test, complete with a power analysis.</p>
+      <p class="flow"><b>Pipeline</b> temporal split · two-tower retrieval (PyTorch) + FAISS · LightGCN graph embeddings · LambdaMART rank · A/B test with power analysis · Airflow · FastAPI</p>
+      <div class="metrics">
+        <span class="metric">two-tower <b>+18%</b> Recall@20 vs ALS</span>
+        <span class="metric">LightGCN <b>+13%</b> Recall@20 vs MF</span>
+        <span class="metric">personalization <b>+68% CTR</b> (p &lt; 0.001)</span>
+      </div>
+      <p class="tech">PyTorch · LightGBM (LambdaMART) · LightGCN · FAISS · Apache Airflow · Docker · FastAPI · Streamlit</p>
     </article>
 
     <p class="subhead reveal">More projects</p>
