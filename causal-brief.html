@@ -77,9 +77,9 @@
   <p>That is a real effect, but it is not a very exciting one. If I only reported the average, the conclusion would basically be that advertising helps a little. What interested me more was whether that average was hiding very different responses across people.</p>
 
   <h2>Looking past the average</h2>
-  <p>Because treatment in this dataset was randomized, I already had the important ingredient for estimating a causal effect. The treated and control groups were created by the experiment itself. I still ran a propensity-score matching analysis as a robustness check. After matching similar treated and control observations and checking covariate balance with standardized mean differences, I got an estimated effect of about <strong>+0.82 percentage points</strong>. The exact number moved a little, which is normal, but the basic conclusion did not change. On average, the intervention helped.</p>
+  <p>Because treatment in this dataset was randomized, I already had the important ingredient for estimating a causal effect. The treated and control groups were created by the experiment itself. I still ran a propensity-score matching analysis as a robustness check. After matching similar treated and control observations and checking covariate balance with standardized mean differences, I got an estimated effect of about <strong>+0.82 percentage points</strong>. The estimate shifted modestly, but the basic conclusion did not change. On average, the intervention helped.</p>
   <p>The more interesting question was whether "on average" was masking something useful. So I trained a <strong>T-Learner</strong>, using separate gradient-boosted models for the treatment and control groups, and estimated how the treatment effect varied across individuals. That changed the picture quite a bit.</p>
-  <p>The users ranked in the top responder quartile had an estimated uplift of about <strong>+3.01 percentage points</strong>. At the other end, the lowest-ranked group had an estimated effect of about <strong>-0.16 percentage points</strong>. So the average of roughly one percentage point was combining people who responded strongly with people for whom the ad did essentially nothing, or slightly hurt the outcome. That was the result I found most useful.</p>
+  <p>The users ranked in the top responder quartile had an estimated uplift of about <strong>+3.01 percentage points</strong>. At the other end, the lowest-ranked group had an estimated effect of about <strong>-0.16 percentage points</strong>. So the average of roughly one percentage point was combining people who responded strongly with people for whom the model estimated little benefit, or even slightly negative uplift. That was the result I found most useful.</p>
 
   <figure>
     <div class="chart-title">Estimated uplift by responder group (percentage points)</div>
@@ -106,7 +106,7 @@
 
   <h2>Why I cared about this result</h2>
   <p>An average treatment effect answers one question: does the intervention work overall? But in many real systems that is not enough. If the cost of an intervention is meaningful, you also want to know who is actually likely to benefit from it.</p>
-  <p>In this experiment, treating everyone based on the average effect would throw away a lot of information. The treatment-effect model suggests a more selective approach, concentrating exposure on people predicted to respond strongly while avoiding groups where the ad appears to do nothing or slightly backfire.</p>
+  <p>In this experiment, treating everyone based on the average effect would throw away a lot of information. The treatment-effect model suggests a more selective approach, concentrating exposure on people predicted to respond strongly while avoiding groups where the model predicts little or negative incremental benefit.</p>
   <p>I evaluated that ranking out of sample using the <strong>Qini coefficient</strong>, which came out to <strong>0.088</strong>. I would not read that number in isolation as "good" or "bad." What matters here is whether the ranking actually separates higher-response users from lower-response users on data the model did not train on, rather than just fitting the training set.</p>
 
   <h2>One thing I would be careful about</h2>
@@ -114,8 +114,8 @@
   <p>The individual treatment effects also come from a model, so the quartile numbers depend on how well the T-Learner generalizes. That is why I looked at the ranking on held-out observations rather than trusting the training predictions. And this is an advertising experiment, so the approach transfers to other problems but the actual numbers do not.</p>
 
   <h2>What I took away from it</h2>
-  <p>The most useful part of this was not that the average effect was around one percentage point. It was seeing how much that single number was hiding. Averages are convenient summaries, but when treatment effects vary a lot across people, the average can be a poor description of the decision you actually have to make.</p>
-  <p>That is what drew me to uplift modeling in the first place. Instead of only asking "does this work," you can start asking "who does it work for." In a lot of applications, the second question is the more useful one.</p>
+  <p>The most useful part of this analysis was not the average effect itself. It was seeing how much that average hid.</p>
+  <p>That is what makes uplift modeling useful to me. Instead of stopping at "does this work?", it lets you ask the more practical question: "who does it work for?"</p>
 
   <p class="endnote">Analysis based on the public Criteo Uplift Modeling Dataset (Diemert et al., 2018). Treatment assignment in the dataset is randomized; matching here was a robustness and balance check.</p>
   <p class="back"><a href="index.html">&larr; Back to portfolio</a></p>
