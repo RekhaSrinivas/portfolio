@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>When the Average Treatment Effect Hides Who Actually Benefits - Rekha Srinivas Chimpiri</title>
+<meta name="description" content="A plain-English walkthrough of a causal analysis on a large randomized advertising trial: how the small average effect hid a strong-responder group and a group the intervention slightly harmed." />
+<link rel="canonical" href="https://rekhasrinivas.github.io/portfolio/causal-brief.html" />
+<meta property="og:title" content="When the Average Treatment Effect Hides Who Actually Benefits" />
+<meta property="og:description" content="Reading past a small average treatment effect to find who actually benefits, on a 14M-row randomized trial." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://rekhasrinivas.github.io/portfolio/causal-brief.html" />
+<meta name="twitter:card" content="summary" />
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%236D28D9'/%3E%3Ctext x='16' y='23' font-family='Georgia,serif' font-size='19' font-weight='700' fill='white' text-anchor='middle'%3ER%3C/text%3E%3C/svg%3E" />
+<style>
+  :root{
+    --bg:#f9f8fc; --surface:#ffffff; --ink:#1a1523; --muted:#5f5a6b; --soft:#857f94;
+    --faint:#ece9f3; --hair:#ddd8e8; --accent:#6d28d9; --accent-2:#5b21b6; --accent-soft:#6d28d912;
+    --pos:#6d28d9; --neg:#c2410c; --neutral:#857f94;
+    --serif:"Iowan Old Style","Palatino Linotype","Book Antiqua",Palatino,Georgia,"Times New Roman",serif;
+    --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,Roboto,Helvetica,Arial,sans-serif;
+    --mono:ui-monospace,"SF Mono","Cascadia Code","Roboto Mono",Menlo,Consolas,monospace;
+    --wrap:760px;
+  }
+  @media (prefers-color-scheme:dark){
+    :root:not([data-theme="light"]){ --bg:#131018; --surface:#1b1626; --ink:#ece8f4; --muted:#a99fbb; --soft:#8b829e; --faint:#282235; --hair:#332b45; --accent:#b794f6; --accent-2:#c4b5fd; --accent-soft:#b794f61f; --pos:#b794f6; --neg:#f19b6b; --neutral:#8b829e; }
+  }
+  :root[data-theme="dark"]{ --bg:#131018; --surface:#1b1626; --ink:#ece8f4; --muted:#a99fbb; --soft:#8b829e; --faint:#282235; --hair:#332b45; --accent:#b794f6; --accent-2:#c4b5fd; --accent-soft:#b794f61f; --pos:#b794f6; --neg:#f19b6b; --neutral:#8b829e; }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0; background:var(--bg); color:var(--ink); font-family:var(--sans); font-size:17px; line-height:1.65; -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility}
+  .wrap{max-width:var(--wrap); margin:0 auto; padding:0 24px}
+  a{color:var(--accent); text-decoration:none}
+  a:hover{text-decoration:underline}
+  header.bar{border-bottom:1px solid var(--faint); background:var(--bg)}
+  .bar .wrap{display:flex; align-items:center; height:58px; gap:16px}
+  .brand{font-family:var(--serif); font-weight:700; font-size:1.1rem; color:var(--ink)}
+  .brand b{color:var(--accent)}
+  .bar nav{margin-left:auto; display:flex; gap:22px}
+  .bar nav a{font-size:.9rem; color:var(--muted); font-weight:500}
+  article{padding:44px 0 72px}
+  .kicker{font-family:var(--mono); font-size:.78rem; letter-spacing:.08em; text-transform:uppercase; color:var(--accent); margin-bottom:14px}
+  h1{font-family:var(--serif); font-size:2.15rem; line-height:1.12; letter-spacing:-.01em; margin-bottom:14px}
+  @media (max-width:640px){ h1{font-size:1.7rem} }
+  .lede{font-size:1.12rem; color:var(--muted); font-style:italic; margin-bottom:10px}
+  .byline{font-size:.86rem; color:var(--soft); margin-bottom:34px; font-family:var(--mono)}
+  h2{font-family:var(--serif); font-size:1.4rem; margin:38px 0 12px; letter-spacing:-.01em}
+  p{margin:0 0 16px}
+  strong{font-weight:700}
+  .callout{border-left:3px solid var(--accent); background:var(--accent-soft); padding:14px 18px; border-radius:0 10px 10px 0; margin:22px 0; font-size:.98rem}
+  table{width:100%; border-collapse:collapse; margin:8px 0 6px; font-size:.98rem}
+  th,td{text-align:left; padding:9px 12px; border-bottom:1px solid var(--hair)}
+  th{font-size:.78rem; text-transform:uppercase; letter-spacing:.05em; color:var(--soft); font-weight:600}
+  td.num{font-family:var(--mono); font-variant-numeric:tabular-nums; text-align:right; font-weight:600}
+  .pos{color:var(--pos)} .neg{color:var(--neg)}
+  figure{margin:26px 0; background:var(--surface); border:1px solid var(--hair); border-radius:14px; padding:22px 20px 14px}
+  figcaption{font-size:.83rem; color:var(--soft); margin-top:12px; text-align:center; font-family:var(--mono)}
+  .chart-title{font-size:.82rem; text-transform:uppercase; letter-spacing:.06em; color:var(--muted); font-weight:600; margin-bottom:14px; text-align:center}
+  ul{margin:0 0 16px; padding-left:20px}
+  li{margin-bottom:9px}
+  .limits{background:var(--surface); border:1px solid var(--hair); border-radius:14px; padding:6px 22px 18px; margin:26px 0}
+  footer{border-top:1px solid var(--faint); padding:26px 0; font-size:.85rem; color:var(--soft)}
+  footer .wrap{display:flex; flex-wrap:wrap; gap:8px 20px}
+  .back{font-family:var(--mono); font-size:.82rem}
+</style>
+</head>
+<body>
+
+<header class="bar">
+  <div class="wrap">
+    <span class="brand">Rekha <b>Srinivas Chimpiri</b></span>
+    <nav>
+      <a href="index.html">Portfolio</a>
+      <a href="https://github.com/RekhaSrinivas">GitHub</a>
+    </nav>
+  </div>
+</header>
+
+<article>
+<div class="wrap">
+  <div class="kicker">Causal analysis / walkthrough</div>
+  <h1>When the Average Treatment Effect Hides Who Actually Benefits</h1>
+  <p class="lede">A plain-English walkthrough of a causal analysis on a large randomized advertising trial, written for a general reader, not a specialist.</p>
+  <p class="byline">Rekha Srinivas Chimpiri</p>
+
+  <h2>The question</h2>
+  <p>If you run an experiment and the average effect is small, is the intervention a failure? Not necessarily. A small average can hide a group that responds strongly and another group the intervention actually hurts. This is a walkthrough of how I looked past the headline number on a large public dataset to find who actually benefited.</p>
+
+  <h2>The data and the experiment</h2>
+  <p>I used the <a href="https://ailab.criteo.com/criteo-uplift-prediction-dataset/">Criteo Uplift Modeling Dataset</a> (Diemert et al., 2018), a roughly 14-million-row <strong>randomized</strong> advertising trial. Users were randomly assigned to either see an ad (treatment) or not (control), and the outcome was whether they later visited the advertiser's site.</p>
+  <div class="callout">Because assignment was <strong>randomized</strong>, the experiment itself is what establishes the causal effect. I did not need matching or any quasi-experimental method to remove confounding. I used propensity-score matching only as a <strong>balance and robustness check</strong>, to confirm the two groups looked alike on observed features and to see how sensitive the estimate was. That distinction runs through the whole analysis.</div>
+
+  <h2>What the raw number says</h2>
+  <p>The raw difference between the treated and control visit rates was <strong>+1.03 percentage points</strong>. After 1:1 nearest-neighbor matching with standardized-mean-difference (SMD) balance diagnostics, the matched estimate was <strong>+0.82 percentage points</strong>, with a tight 95% confidence interval. So the average effect of showing the ad is real but small, under one percentage point. If you stopped here, the story would be "ads work a little, ship them everywhere." That story is incomplete.</p>
+
+  <h2>What the heterogeneity reveals</h2>
+  <p>I then trained a <strong>T-Learner</strong> (two gradient-boosted models, one for treated and one for control) to estimate each user's individual treatment effect, and evaluated its ranking ability out-of-sample with a <strong>Qini coefficient of 0.088</strong>, meaningfully better than random for a setting where the average effect is this small. Ranking users by predicted uplift told a very different story than the average.</p>
+
+  <figure>
+    <div class="chart-title">Estimated uplift by responder group (percentage points)</div>
+    <svg viewBox="0 0 560 260" width="100%" role="img" aria-label="Bar chart: top responder quartile +3.01 points, overall matched average +0.82 points, lowest quartile -0.16 points.">
+      <!-- geometry: zero line at y=190, +scale 46px per point up, small down for negative -->
+      <line x1="70" y1="190" x2="540" y2="190" stroke="var(--hair)" stroke-width="1.5"/>
+      <text x="60" y="194" text-anchor="end" font-family="var(--mono)" font-size="12" fill="var(--soft)">0</text>
+      <line x1="70" y1="52" x2="540" y2="52" stroke="var(--faint)" stroke-width="1"/>
+      <text x="60" y="56" text-anchor="end" font-family="var(--mono)" font-size="12" fill="var(--soft)">+3</text>
+
+      <!-- Top quartile +3.01 -> height 3.01*46=138 -->
+      <rect x="110" y="52" width="90" height="138" rx="4" fill="var(--pos)"/>
+      <text x="155" y="44" text-anchor="middle" font-family="var(--mono)" font-size="14" font-weight="700" fill="var(--pos)">+3.01</text>
+      <text x="155" y="212" text-anchor="middle" font-family="var(--sans)" font-size="12.5" fill="var(--ink)">Top quartile</text>
+
+      <!-- Overall +0.82 -> height 0.82*46=38 -->
+      <rect x="260" y="152" width="90" height="38" rx="4" fill="var(--neutral)"/>
+      <text x="305" y="144" text-anchor="middle" font-family="var(--mono)" font-size="14" font-weight="700" fill="var(--neutral)">+0.82</text>
+      <text x="305" y="212" text-anchor="middle" font-family="var(--sans)" font-size="12.5" fill="var(--ink)">Overall average</text>
+
+      <!-- Bottom quartile -0.16 -> below zero, height 0.16*46~=7 (min 8 for visibility) -->
+      <rect x="410" y="190" width="90" height="9" rx="4" fill="var(--neg)"/>
+      <text x="455" y="222" text-anchor="middle" font-family="var(--mono)" font-size="14" font-weight="700" fill="var(--neg)">-0.16</text>
+      <text x="455" y="238" text-anchor="middle" font-family="var(--sans)" font-size="12.5" fill="var(--ink)">Lowest quartile</text>
+    </svg>
+    <figcaption>Values are model-ranked estimates on the held-out test set. The four-quartile breakdown is rendered in full in the project dashboard.</figcaption>
+  </figure>
+
+  <table>
+    <thead><tr><th>Segment</th><th style="text-align:right">Estimated uplift</th></tr></thead>
+    <tbody>
+      <tr><td>Top responder quartile</td><td class="num pos">+3.01 pp</td></tr>
+      <tr><td>Overall matched average</td><td class="num">+0.82 pp</td></tr>
+      <tr><td>Lowest quartile ("sleeping dogs")</td><td class="num neg">-0.16 pp</td></tr>
+    </tbody>
+  </table>
+  <p>The top quartile responds at roughly three times the average, while the lowest quartile responds <strong>negatively</strong>: showing them an ad slightly decreases their visit rate. The sub-1-point average was hiding both a strong-responder group and a group being mildly harmed.</p>
+
+  <h2>Why the distinction matters</h2>
+  <p>The average answers "should we do this at all?" The heterogeneity answers "for whom?" Those are different questions, and only the second one changes what you actually do. Here it converts a lukewarm "it works a little" into a <strong>differentiated targeting strategy</strong>: concentrate on the strong responders and stop spending on the group the intervention hurts. The same logic applies far beyond advertising, anywhere an intervention's average effect is small but its distribution is uneven.</p>
+
+  <div class="limits">
+  <h2>Methods and limitations</h2>
+  <ul>
+    <li>The identification comes from <strong>randomization</strong>, not from matching. Propensity-score matching here is a balance and robustness exercise, not a fix for confounding. On a truly randomized dataset, matching should not move the estimate much, and it did not.</li>
+    <li>The uplift-quartile effects are <strong>model-ranked estimates</strong>, so they depend on the T-Learner's quality. I evaluated ranking out-of-sample with Qini rather than trusting in-sample fit.</li>
+    <li>This is advertising data. The <strong>method</strong> transfers to other domains, but these specific numbers do not.</li>
+    <li>Observed-feature balance does not guarantee balance on unobserved features. Randomization is what protects against that here, which is exactly why I lean on it rather than on the matching step.</li>
+  </ul>
+  <p style="margin-bottom:0">Stack: Python (scikit-learn, scipy, pandas), FastAPI, and a lightweight dashboard. The full pipeline, propensity scores, matching with SMD diagnostics, T-Learner uplift, and out-of-sample Qini, runs end-to-end on the public dataset.</p>
+  </div>
+
+  <p class="back"><a href="index.html">&larr; Back to portfolio</a></p>
+</div>
+</article>
+
+<footer>
+  <div class="wrap">
+    <span>Rekha Srinivas Chimpiri</span>
+    <a href="https://github.com/RekhaSrinivas">GitHub</a>
+    <a href="https://www.linkedin.com/in/rekhasrinivas/">LinkedIn</a>
+    <span style="color:var(--soft)">All figures are outputs on the public Criteo dataset. Treatment was randomized; matching was a robustness check, not causal identification.</span>
+  </div>
+</footer>
+
+</body>
+</html>
